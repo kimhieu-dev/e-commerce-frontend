@@ -11,25 +11,25 @@ const LoginForm = ({ activeRole }) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleLogin = async (e) => {
+const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      // Mã hóa thông tin đăng nhập theo chuẩn Basic Auth
+      // 1. Tạo chuỗi mã hóa Basic Auth cho Header (nếu bạn muốn giữ cơ chế filter này)
       const authHeader = 'Basic ' + btoa(`${formData.username}:${formData.password}`);
 
-      // Gửi request POST tới endpoint đăng nhập [cite: 17]
-      const response = await axiosInstance.post('/api/v1/auth/login', {}, {
+      // 2. ĐỒNG THỜI truyền formData vào tham số thứ 2 (Request Body) thay vì để {} trống
+      const response = await axiosInstance.post('/api/v1/auth/login', formData, {
         headers: { 'Authorization': authHeader }
       });
 
       if (response.data.code === 200) {
-        alert(`Đăng nhập thành công vai trò: ${activeRole}`);
+        alert(`Đăng nhập thành công với vai trò ${activeRole}!`);
       }
     } catch (error) {
       console.error('Lỗi đăng nhập:', error);
-      alert('Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.');
+      alert('Đăng nhập thất bại. Hãy kiểm tra tài khoản hoặc cấu hình Spring Security.');
     } finally {
       setLoading(false);
     }
