@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // Thêm Hook này
 import axiosInstance from '../../api/axiosInstance';
 import { Mail, Lock, Eye, EyeOff, ArrowRight } from 'lucide-react';
 
@@ -6,6 +7,7 @@ const LoginForm = ({ activeRole }) => {
   const [formData, setFormData] = useState({ username: '', password: '' });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate(); // Khởi tạo điều hướng
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -25,7 +27,11 @@ const handleLogin = async (e) => {
       });
 
       if (response.data.code === 200) {
-        alert(`Đăng nhập thành công với vai trò ${activeRole}!`);
+        // 1. Lưu Header lại để dùng cho các trang sau
+        localStorage.setItem('authHeader', authHeader);
+        
+        // 2. Chuyển hướng về trang chủ
+        navigate('/');
       }
     } catch (error) {
       console.error('Lỗi đăng nhập:', error);

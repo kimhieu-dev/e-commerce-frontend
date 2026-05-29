@@ -6,5 +6,13 @@ const axiosInstance = axios.create({
     'Content-Type': 'application/json',
   },
 });
+// Tự động gắn Basic Auth Header vào mỗi request nếu đã lưu ở localStorage
+axiosInstance.interceptors.request.use((config) => {
+  const authHeader = localStorage.getItem('authHeader');
+  if (authHeader) {
+    config.headers.Authorization = authHeader;
+  }
+  return config;
+});
 
 export default axiosInstance;
