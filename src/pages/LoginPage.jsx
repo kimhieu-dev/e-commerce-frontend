@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import RoleSelector from '../components/Login/RoleSelector';
 import LoginForm from '../components/Login/LoginForm';
 
@@ -54,7 +55,7 @@ const LoginPage = () => {
 
           <footer className="mt-8 text-center">
             <p className="text-sm text-gray-500">
-              Chưa có tài khoản? <span className="text-blue-700 font-semibold cursor-pointer hover:underline">Đăng ký ngay</span>
+              Chưa có tài khoản? <Link to="/register" className="text-blue-700 font-semibold cursor-pointer hover:underline">Đăng ký ngay</Link>
             </p>
           </footer>
         </div>

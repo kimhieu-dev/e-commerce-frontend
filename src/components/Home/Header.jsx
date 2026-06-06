@@ -1,12 +1,32 @@
-import React from 'react';
-import { Search, ShoppingCart, User } from 'lucide-react';
+import React, { useState } from 'react';
+import { Search, ShoppingCart, User, LogOut } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { logoutApi } from '../../services/authService';
+import LogoutConfirmModal from './LogoutConfirmModal';
 
 const Header = ({ onSearch }) => {
-  const [searchTerm, setSearchTerm] = React.useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const navigate = useNavigate();
 
   const handleSearch = (e) => {
     e.preventDefault();
     onSearch(searchTerm);
+  };
+
+  const handleLogout = async () => {
+    try {
+      const authHeader = localStorage.getItem('authHeader');
+      if (authHeader) {
+        const token = authHeader.replace('Bearer ', '');
+        await logoutApi(token);
+      }
+    } catch (error) {
+      console.error('Lỗi khi gọi API đăng xuất:', error);
+    } finally {
+      localStorage.removeItem('authHeader');
+      navigate('/login');
+    }
   };
 
   return (
@@ -40,8 +60,21 @@ const Header = ({ onSearch }) => {
           <button className="p-2 hover:bg-gray-100 rounded-full transition-colors">
             <User size={24} />
           </button>
+          <button 
+            onClick={() => setIsModalOpen(true)}
+            className="p-2 hover:bg-red-50 text-gray-600 hover:text-red-600 rounded-full transition-colors"
+            title="Đăng xuất"
+          >
+            <LogOut size={24} />
+          </button>
         </div>
       </div>
+
+      <LogoutConfirmModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+        onConfirm={handleLogout} 
+      />
     </header>
   );
 };

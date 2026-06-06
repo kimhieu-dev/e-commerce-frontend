@@ -1,41 +1,50 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Thêm Hook này
-import axiosInstance from '../../api/axiosInstance';
+import { useNavigate } from 'react-router-dom';
 import { Mail, Lock, Eye, EyeOff, ArrowRight } from 'lucide-react';
+import { loginApi } from '../../services/authService';
 
 const LoginForm = ({ activeRole }) => {
   const [formData, setFormData] = useState({ username: '', password: '' });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate(); // Khởi tạo điều hướng
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-const handleLogin = async (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      // 1. Tạo chuỗi mã hóa Basic Auth cho Header (nếu bạn muốn giữ cơ chế filter này)
-      const authHeader = 'Basic ' + btoa(`${formData.username}:${formData.password}`);
+      // Gọi API đăng nhập qua service
+      const data = await loginApi(formData.username, formData.password);
 
-      // 2. ĐỒNG THỜI truyền formData vào tham số thứ 2 (Request Body) thay vì để {} trống
-      const response = await axiosInstance.post('/api/v1/auth/login', formData, {
-        headers: { 'Authorization': authHeader }
-      });
-
-      if (response.data.code === 200) {
-        // 1. Lưu Header lại để dùng cho các trang sau
-        localStorage.setItem('authHeader', authHeader);
+      if (data.code === 200) {
+        const token = data.data.token;
         
-        // 2. Chuyển hướng về trang chủ
+        // Giải mã token để kiểm tra Role
+        const payloadBase64 = token.split('.')[1];
+        const decodedPayload = JSON.parse(atob(payloadBase64));
+        const userRoles = decodedPayload.scope ? decodedPayload.scope.split(' ') : [];
+        const requiredRole = `ROLE_${activeRole}`;
+
+        if (!userRoles.includes(requiredRole)) {
+          alert(`Tài khoản của bạn không có quyền truy cập với vai trò ${activeRole}`);
+          setLoading(false);
+          return;
+        }
+
+        // Lưu token JWT vào localStorage
+        localStorage.setItem('authHeader', `Bearer ${token}`);
+        
+        // Chuyển hướng về trang chủ
         navigate('/');
       }
     } catch (error) {
       console.error('Lỗi đăng nhập:', error);
-      alert('Đăng nhập thất bại. Hãy kiểm tra tài khoản hoặc cấu hình Spring Security.');
+      alert(error.message || 'Đăng nhập thất bại. Hãy kiểm tra lại tài khoản.');
     } finally {
       setLoading(false);
     }

@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
 import HomePage from './pages/HomePage';
 
 // Component bọc bảo vệ Route - Tự động kiểm tra trạng thái thời gian thực
@@ -15,7 +16,7 @@ const ProtectedRoute = ({ children }) => {
   return children;
 };
 
-// Component bọc dành cho trang Login để tránh việc đã đăng nhập rồi lại quay lại Login
+// Component bọc dành cho trang Login/Register để tránh việc đã đăng nhập rồi lại quay lại
 const PublicRoute = ({ children }) => {
   const hasAuth = !!localStorage.getItem('authHeader');
   
@@ -37,6 +38,16 @@ function App() {
           element={
             <PublicRoute>
               <LoginPage />
+            </PublicRoute>
+          } 
+        />
+
+        {/* Route Đăng ký */}
+        <Route 
+          path="/register" 
+          element={
+            <PublicRoute>
+              <RegisterPage />
             </PublicRoute>
           } 
         />
