@@ -42,28 +42,6 @@ const CategoryItem = ({ category, level = 0, onSelect, selectedId }) => {
 };
 
 const CategoryMenu = ({ categories, onSelect, selectedId }) => {
-  // Build tree from flat list
-  const buildTree = (list) => {
-    const map = {};
-    const roots = [];
-    
-    list.forEach(item => {
-      map[item.id] = { ...item, children: [] };
-    });
-    
-    list.forEach(item => {
-      if (item.parentId && map[item.parentId]) {
-        map[item.parentId].children.push(map[item.id]);
-      } else {
-        roots.push(map[item.id]);
-      }
-    });
-    
-    return roots;
-  };
-
-  const tree = React.useMemo(() => buildTree(categories), [categories]);
-
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-2 h-fit">
       <h2 className="text-lg font-bold p-3 border-b mb-2">Danh mục</h2>
@@ -74,14 +52,20 @@ const CategoryMenu = ({ categories, onSelect, selectedId }) => {
         >
           Tất cả sản phẩm
         </div>
-        {tree.map(root => (
-          <CategoryItem 
-            key={root.id} 
-            category={root} 
-            onSelect={onSelect}
-            selectedId={selectedId}
-          />
-        ))}
+        {categories && categories.length > 0 ? (
+          categories.map(root => (
+            <CategoryItem 
+              key={root.id || root.slug} 
+              category={root} 
+              onSelect={onSelect}
+              selectedId={selectedId}
+            />
+          ))
+        ) : (
+          <div className="py-4 px-3 text-gray-400 text-sm italic text-center">
+            Không tìm thấy danh mục
+          </div>
+        )}
       </div>
     </div>
   );

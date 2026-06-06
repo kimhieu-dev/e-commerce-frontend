@@ -41,6 +41,7 @@ const HomePage = () => {
         name: currentSearch,
         minPrice: currentFilters.minPrice,
         maxPrice: currentFilters.maxPrice,
+        categoryId: currentFilters.categoryId,
         page: currentPage,
         size: PAGE_SIZE,
         sort: currentSort
@@ -70,6 +71,7 @@ const HomePage = () => {
   const fetchCategories = useCallback(async () => {
     try {
       const response = await getCategoriesApi();
+      console.log("API Categories Response:", response);
       setCategories(response.data || []);
     } catch (err) {
       console.error("Lỗi khi tải danh mục:", err);
@@ -98,8 +100,8 @@ const HomePage = () => {
 
   const handleCategorySelect = (category) => {
     setSelectedCategory(category);
-    // Lưu ý: Hiện tại Backend chưa hỗ trợ filter theo categoryId trong ProductFilterReq
-    console.log("Selected category:", category);
+    const categoryId = category ? category.id : null;
+    fetchProducts(false, { ...filters, categoryId }, sort, searchQuery);
   };
 
   const handleLoadMore = () => {
