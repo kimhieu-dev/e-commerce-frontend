@@ -1,30 +1,35 @@
 import React from 'react';
 import { ShoppingCart } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const ProductCard = ({ product }) => {
-  const { name, basePrice, thumbnailUrl, sku, inventory } = product;
+  const { id, name, basePrice, thumbnailUrl, sku, inventory } = product;
 
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow border border-gray-100 flex flex-col h-full">
       {/* Product Image */}
-      <div className="aspect-square bg-gray-100 relative overflow-hidden">
-        <img
-          src={thumbnailUrl || 'https://via.placeholder.com/300'}
-          alt={name}
-          className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-        />
-        {inventory?.quantityInStock <= 0 && (
-          <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-            <span className="bg-white text-gray-800 px-3 py-1 rounded-full text-sm font-medium">Hết hàng</span>
-          </div>
-        )}
-      </div>
+      <Link to={`/product/${id}`} className="block">
+        <div className="aspect-square bg-gray-100 relative overflow-hidden">
+          <img
+            src={thumbnailUrl || 'https://via.placeholder.com/300'}
+            alt={name}
+            className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+          />
+          {inventory?.quantityInStock <= 0 && (
+            <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+              <span className="bg-white text-gray-800 px-3 py-1 rounded-full text-sm font-medium">Hết hàng</span>
+            </div>
+          )}
+        </div>
+      </Link>
 
       {/* Product Info */}
       <div className="p-4 flex flex-col flex-1">
-        <h3 className="font-semibold text-gray-800 line-clamp-2 h-12 mb-2" title={name}>
-          {name}
-        </h3>
+        <Link to={`/product/${id}`}>
+          <h3 className="font-semibold text-gray-800 line-clamp-2 h-12 mb-2 hover:text-blue-600 transition-colors" title={name}>
+            {name}
+          </h3>
+        </Link>
         <p className="text-sm text-gray-500 mb-2">SKU: {sku}</p>
         <div className="mt-auto">
           <div className="text-xl font-bold text-red-600 mb-3">

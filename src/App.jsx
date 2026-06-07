@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import HomePage from './pages/HomePage';
+import ProductDetailPage from './pages/ProductDetailPage';
 
 // Component bọc bảo vệ Route - Tự động kiểm tra trạng thái thời gian thực
 const ProtectedRoute = ({ children }) => {
@@ -58,6 +59,15 @@ function App() {
           element={
             <ProtectedRoute>
               <HomePage />
+            </ProtectedRoute>
+          } 
+        />
+
+        <Route 
+          path="/product/:id" 
+          element={
+            <ProtectedRoute>
+              <ProductDetailPage />
             </ProtectedRoute>
           } 
         />
